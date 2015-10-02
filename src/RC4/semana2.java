@@ -1,6 +1,7 @@
 import javax.crypto.*;
 import java.security.*;
 import java.io.*; 
+import javax.crypto.spec.*;
 
 public class semana2
 {
@@ -10,19 +11,24 @@ public class semana2
 	try 
 	{
 		KeyGenerator gerador = KeyGenerator.getInstance("RC4"); //instancia geradora de chaves
-		Key chave = gerador.generateKey(); //gerar a chave
+		Key key = gerador.generateKey(); //gerar a chave
+		
+		//alternativa: SecretKeySpec
+		byte[] keykey = key.getEncoded();		
+		SecretKeySpec chave = new SecretKeySpec(keykey,"RC4");
+		
+		//guardar a palavra-passe num ficheiro
+		byte[] pass = chave.getEncoded();
+		FileOutputStream passwd = new FileOutputStream("/home/jp/Documentos/CRIPTO/pass.txt"); 
+	    	passwd.write(pass);
+	    	passwd.close();
 
 		Cipher cifra = Cipher.getInstance("RC4"); //gerar uma cifra
 		cifra.init(Cipher.ENCRYPT_MODE, chave); //inicializa a cifra para dizer o que quero fazer com ela: encriptar
 
-		//encriptar a mensagem usando o doFinal
-
-		//byte[] data = "Hello World!".getBytes();
 		//byte[] data = Files.getBytes(newFile("/home/Documentos/SO/zeto.txt").toPath());
-		//byte[] resultado = cifra.doFinal(data);
-
 		FileInputStream stream=null;
-               	File txt = new File("/home/jp/Documentos/CRIPTO/mietium-crpt/src/RC4/enc.txt"); //local onde se encontra o ficheiro enc
+               	File txt = new File("/home/jp/Documentos/CRIPTO/enc.txt"); //local onde se encontra o ficheiro enc
                	byte[] data = new byte[(int) txt.length()];
         
         	//converter ficheiro para um array de bytes
@@ -33,6 +39,7 @@ public class semana2
 		for (int i = 0; i < data.length; i++) {
 			System.out.println(/*(char)*/data[i]);}
 
+		//encriptar a mensagem usando o doFinal
 		byte[] resultado = cifra.doFinal(data);
 		System.out.println("Dados Encriptados: " + new String(resultado));	
 
@@ -42,7 +49,7 @@ public class semana2
 		System.out.println("Dados desencriptados: " + new String(original));
 
 		//converter array de bytes para um ficheiro
-		FileOutputStream saida = new FileOutputStream("/home/jp/Documentos/CRIPTO/mietium-crpt/src/RC4/dec.txt"); 
+		FileOutputStream saida = new FileOutputStream("/home/jp/Documentos/CRIPTO/dec.txt"); 
 	    	saida.write(original);
 	    	saida.close();
 
